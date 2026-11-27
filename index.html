@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#11131b">
+    <meta name="description" content="A quick, private pass-and-play imposter party game.">
+    <title>Undercover — The imposter party game</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Undercover home">
+          <span class="brand-mark" aria-hidden="true">✦</span>
+          <span>UNDERCOVER</span>
+        </a>
+        <span class="topbar-note"><span class="live-dot" aria-hidden="true"></span> A pass-the-phone party game</span>
+      </header>
+
+      <section class="setup-view" id="setup-view" aria-labelledby="page-title">
+        <div class="intro">
+          <div class="eyebrow"><span class="eyebrow-line"></span> THE GROUP GAME</div>
+          <h1 id="page-title">One word.<br><span>One imposter.</span></h1>
+          <p class="intro-copy">Everyone gets the secret word. Well, almost everyone. Pass the phone around and try not to give yourself away.</p>
+        </div>
+
+        <form class="setup-card" id="setup-form">
+          <div class="card-heading">
+            <div>
+              <span class="step-label">FIRST THINGS FIRST</span>
+              <h2>Set up your game</h2>
+            </div>
+            <div class="card-icon" aria-hidden="true">✳</div>
+          </div>
+
+          <div class="form-row">
+            <label for="player-count">How many players?</label>
+            <div class="number-control">
+              <button class="count-button" id="decrease-count" type="button" aria-label="Remove one player">−</button>
+              <input id="player-count" name="player-count" type="number" min="3" max="20" value="5" required>
+              <button class="count-button" id="increase-count" type="button" aria-label="Add one player">+</button>
+            </div>
+          </div>
+          <p class="field-hint">You’ll need at least 3 players.</p>
+
+          <div class="form-row category-row">
+            <label for="category">Word category</label>
+            <div class="select-wrap">
+              <select id="category" name="category">
+                <option value="all">Surprise me</option>
+                <option value="food">Food &amp; drink</option>
+                <option value="animals">Animals</option>
+                <option value="places">Places</option>
+                <option value="things">Everyday things</option>
+              </select>
+              <span aria-hidden="true">⌄</span>
+            </div>
+          </div>
+          <div class="form-row hint-row">
+            <label for="hint-mode">Imposter hints</label>
+            <div class="select-wrap">
+              <select id="hint-mode" name="hint-mode">
+                <option value="none">No hints</option>
+                <option value="always">Always give a hint</option>
+                <option value="first">Only if the imposter goes first</option>
+              </select>
+              <span aria-hidden="true">⌄</span>
+            </div>
+          </div>
+          <p class="field-hint hint-description" id="hint-description">The imposter gets no extra clues.</p>
+
+          <div class="players-heading">
+            <div>
+              <label for="player-name-0">Who’s playing?</label>
+              <p class="field-hint">Names are optional — we’ll number players for you.</p>
+            </div>
+            <span class="players-count" id="players-count">5 PLAYERS</span>
+          </div>
+          <div class="player-list" id="player-list"></div>
+
+          <p class="form-error" id="form-error" role="alert" hidden></p>
+          <button class="primary-button start-button" type="submit">
+            <span>Deal the roles</span><span class="button-arrow" aria-hidden="true">↗</span>
+          </button>
+          <p class="privacy-note"><span aria-hidden="true">◉</span> Keep the phone tilted away from curious eyes.</p>
+        </form>
+
+        <footer class="footer-note">Made for good friends &amp; questionable poker faces.</footer>
+      </section>
+
+      <section class="game-view" id="game-view" aria-live="polite" hidden>
+        <div class="game-header">
+          <div class="eyebrow"><span class="eyebrow-line"></span> ROUND IN PROGRESS</div>
+          <div class="progress-label" id="progress-label"></div>
+          <div class="progress-track" aria-hidden="true"><span id="progress-fill"></span></div>
+        </div>
+
+        <div class="game-card" id="pass-card">
+          <div class="card-sparkle" aria-hidden="true">✳</div>
+          <span class="step-label">PASS THE PHONE</span>
+          <h1>Hand it to<br><span id="current-player-name"></span></h1>
+          <p class="game-copy">Make sure nobody else can see the screen. Ready? Tap below to reveal your role.</p>
+          <button class="primary-button" id="reveal-button" type="button">
+            <span>I’m ready — show me</span><span class="button-arrow" aria-hidden="true">↗</span>
+          </button>
+          <div class="privacy-note"><span aria-hidden="true">◉</span> Keep your role to yourself.</div>
+        </div>
+
+        <div class="game-card role-card" id="role-card" hidden>
+          <div class="role-symbol" id="role-symbol" aria-hidden="true"></div>
+          <span class="step-label" id="role-kicker"></span>
+          <h1 id="role-title"></h1>
+          <div class="word-tile" id="word-tile" hidden></div>
+          <div class="hint-tile" id="imposter-hint" hidden>
+            <span>YOUR HINT</span>
+            <strong id="hint-text"></strong>
+          </div>
+          <p class="game-copy" id="role-copy"></p>
+          <button class="primary-button" id="next-button" type="button">
+            <span id="next-button-label"></span><span class="button-arrow" aria-hidden="true">→</span>
+          </button>
+          <div class="privacy-note"><span aria-hidden="true">◉</span> Hide your role before passing the phone.</div>
+        </div>
+
+        <div class="game-card finish-card" id="finish-card" hidden>
+          <div class="role-symbol finish-symbol" aria-hidden="true">✦</div>
+          <span class="step-label">EVERYONE’S IN</span>
+          <h1>Let the bluffing<br><span>begin.</span></h1>
+          <p class="game-copy">Keep your phones down, take turns giving a clue, and figure out who doesn’t know the word.</p>
+          <button class="primary-button" id="play-again-button" type="button">
+            <span>Deal a new round</span><span class="button-arrow" aria-hidden="true">↗</span>
+          </button>
+          <button class="text-button" id="edit-players-button" type="button">Change players or category</button>
+        </div>
+
+        <p class="game-footer">No accounts. No peeking. Just your group.</p>
+      </section>
+    </main>
+  </body>
+</html>
