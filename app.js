@@ -12,6 +12,7 @@ const playerCountInput = document.querySelector("#player-count");
 const playerList = document.querySelector("#player-list");
 const playersCount = document.querySelector("#players-count");
 const categoryInput = document.querySelector("#category");
+const hintModeInput = document.querySelector("#hint-mode");
 const formError = document.querySelector("#form-error");
 const passCard = document.querySelector("#pass-card");
 const roleCard = document.querySelector("#role-card");
@@ -23,12 +24,66 @@ const roleKicker = document.querySelector("#role-kicker");
 const roleTitle = document.querySelector("#role-title");
 const roleSymbol = document.querySelector("#role-symbol");
 const wordTile = document.querySelector("#word-tile");
+const imposterHint = document.querySelector("#imposter-hint");
+const hintText = document.querySelector("#hint-text");
 const roleCopy = document.querySelector("#role-copy");
 const nextButtonLabel = document.querySelector("#next-button-label");
+
+const wordHints = {
+  Tacos: "A handheld meal with a filling tucked inside.",
+  Pancakes: "A fluffy breakfast favorite, often stacked.",
+  Popcorn: "A crunchy snack that pops when heated.",
+  Sushi: "A Japanese dish often wrapped or topped with rice.",
+  Watermelon: "A juicy summer fruit with a green rind.",
+  Brownie: "A rich, chewy chocolate square.",
+  Lemonade: "A sweet-tart drink made with citrus.",
+  Dumplings: "Small parcels of dough with a savory filling.",
+  Avocado: "A creamy green fruit often mashed on toast.",
+  Pizza: "A baked, cheesy favorite usually cut into slices.",
+  Pretzel: "A salty snack with a distinctive twisted shape.",
+  Cinnamon: "A warm, fragrant spice often used in baking.",
+  Penguin: "A tuxedoed bird that waddles and swims.",
+  Giraffe: "A spotted animal with an exceptionally long neck.",
+  Octopus: "A clever sea creature with eight arms.",
+  Hedgehog: "A tiny mammal covered in prickly spines.",
+  Flamingo: "A pink wading bird that often stands on one leg.",
+  Dolphin: "An intelligent marine mammal known for leaping.",
+  Raccoon: "A masked nighttime visitor with nimble paws.",
+  Koala: "An Australian tree-dweller that loves eucalyptus.",
+  Peacock: "A bird famous for its dazzling, fanned tail.",
+  Chameleon: "A lizard that can change color and flick out its tongue.",
+  Otter: "A playful swimmer that sometimes floats on its back.",
+  Llama: "A woolly, long-necked animal from the Andes.",
+  Aquarium: "A place to see fish and other underwater life.",
+  Airport: "A busy travel hub for people flying away.",
+  Library: "A quiet place to borrow books.",
+  Camping: "An outdoor getaway that might involve a tent.",
+  Museum: "A place to explore exhibits from art to history.",
+  Rooftop: "An elevated outdoor space above a building.",
+  Bakery: "A shop filled with freshly baked treats.",
+  Lighthouse: "A coastal tower that guides ships at night.",
+  Subway: "An underground train system in a city.",
+  Planetarium: "A domed theater for exploring the night sky.",
+  Waterfall: "A river that makes a dramatic drop over a cliff.",
+  "Bowling alley": "A place to roll a heavy ball toward ten pins.",
+  Sunglasses: "Tinted eyewear for bright, sunny days.",
+  Suitcase: "Luggage for packing clothes on a trip.",
+  "Alarm clock": "A bedside device that wakes you up.",
+  Umbrella: "A handheld canopy for rainy weather.",
+  Skateboard: "A wheeled board for rolling and doing tricks.",
+  Headphones: "Wearable speakers for listening privately.",
+  Candle: "A waxy light source with a flickering flame.",
+  Toothbrush: "A bristled tool for daily dental care.",
+  Telescope: "An instrument that brings distant stars closer.",
+  "Snow globe": "A tiny scene that swirls when you shake it.",
+  Backpack: "A bag carried on your shoulders.",
+  "Rubik’s cube": "A colorful twisty puzzle with matching sides.",
+};
 
 let players = [];
 let imposterIndex = -1;
 let secretWord = "";
+let secretCategory = "";
 let currentIndex = 0;
 
 function randomIndex(length) {
@@ -97,10 +152,13 @@ function startRound() {
   }
 
   try {
+    const firstPlayerIndex = randomIndex(players.length);
+    players = [...players.slice(firstPlayerIndex), ...players.slice(0, firstPlayerIndex)];
     imposterIndex = randomIndex(players.length);
-    const availableWords = categoryInput.value === "all"
-      ? Object.values(words).flat()
-      : words[categoryInput.value];
+    secretCategory = categoryInput.value === "all"
+      ? Object.keys(words)[randomIndex(Object.keys(words).length)]
+      : categoryInput.value;
+    const availableWords = words[secretCategory];
     secretWord = availableWords[randomIndex(availableWords.length)];
   } catch (error) {
     formError.textContent = error.message;
@@ -143,8 +201,16 @@ document.querySelector("#reveal-button").addEventListener("click", () => {
   roleSymbol.classList.toggle("known-symbol", !isImposter);
   wordTile.hidden = isImposter;
   wordTile.textContent = isImposter ? "" : secretWord;
+  const showHint = isImposter && (
+    hintModeInput.value === "always" ||
+    (hintModeInput.value === "first" && currentIndex === 0)
+  );
+  imposterHint.hidden = !showHint;
+  hintText.textContent = showHint ? wordHints[secretWord] : "";
   roleCopy.textContent = isImposter
-    ? "You don’t get the word. Listen carefully, blend in, and try to work it out."
+    ? showHint
+      ? "Use your hint to blend in, but don’t let anyone know you got extra help."
+      : "You don’t get the word. Listen carefully, blend in, and try to work it out."
     : "This is the secret word. Remember it, then keep it to yourself.";
   nextButtonLabel.textContent = currentIndex === players.length - 1 ? "Hide my role" : "Hide & pass the phone";
   progressLabel.textContent = `PLAYER ${currentIndex + 1} OF ${players.length} · ROLE REVEALED`;
@@ -166,6 +232,14 @@ document.querySelector("#next-button").addEventListener("click", () => {
 });
 
 document.querySelector("#play-again-button").addEventListener("click", startRound);
+hintModeInput.addEventListener("change", () => {
+  const descriptions = {
+    none: "The imposter gets no extra clues.",
+    always: "The imposter gets a broad clue about the word.",
+    first: "The imposter gets a clue only if they’re first to see their role.",
+  };
+  document.querySelector("#hint-description").textContent = descriptions[hintModeInput.value];
+});
 document.querySelector("#edit-players-button").addEventListener("click", () => {
   gameView.hidden = true;
   setupView.hidden = false;

@@ -298,6 +298,14 @@ p {
   border-bottom: 1px solid var(--border);
 }
 
+.hint-row {
+  margin-top: 12px;
+}
+
+.hint-description {
+  margin: 0 0 17px;
+}
+
 .select-wrap {
   position: relative;
 }
@@ -538,6 +546,29 @@ p {
   color: var(--accent);
   font-family: var(--font-display);
   font-size: 21px;
+  font-weight: 600;
+}
+
+.hint-tile {
+  display: grid;
+  gap: 5px;
+  margin: 2px 0 20px;
+  padding: 11px 14px;
+  border: 1px solid rgba(255, 139, 131, 0.2);
+  border-radius: 10px;
+  background: rgba(255, 139, 131, 0.07);
+}
+
+.hint-tile span {
+  color: #ff9a91;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+.hint-tile strong {
+  color: #f3e5e3;
+  font-size: 14px;
   font-weight: 600;
 }
 

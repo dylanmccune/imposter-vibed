@@ -61,6 +61,18 @@
               <span aria-hidden="true">⌄</span>
             </div>
           </div>
+          <div class="form-row hint-row">
+            <label for="hint-mode">Imposter hints</label>
+            <div class="select-wrap">
+              <select id="hint-mode" name="hint-mode">
+                <option value="none">No hints</option>
+                <option value="always">Always give a hint</option>
+                <option value="first">Only if the imposter goes first</option>
+              </select>
+              <span aria-hidden="true">⌄</span>
+            </div>
+          </div>
+          <p class="field-hint hint-description" id="hint-description">The imposter gets no extra clues.</p>
 
           <div class="players-heading">
             <div>
@@ -104,6 +116,10 @@
           <span class="step-label" id="role-kicker"></span>
           <h1 id="role-title"></h1>
           <div class="word-tile" id="word-tile" hidden></div>
+          <div class="hint-tile" id="imposter-hint" hidden>
+            <span>YOUR HINT</span>
+            <strong id="hint-text"></strong>
+          </div>
           <p class="game-copy" id="role-copy"></p>
           <button class="primary-button" id="next-button" type="button">
             <span id="next-button-label"></span><span class="button-arrow" aria-hidden="true">→</span>
