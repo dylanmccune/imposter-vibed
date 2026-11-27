@@ -67,7 +67,7 @@
               <select id="hint-mode" name="hint-mode">
                 <option value="none">No hints</option>
                 <option value="always">Always give a hint</option>
-                <option value="first">Only if the imposter goes first</option>
+                <option value="first">Only if the imposter gives the first clue</option>
               </select>
               <span aria-hidden="true">⌄</span>
             </div>
@@ -131,7 +131,7 @@
           <div class="role-symbol finish-symbol" aria-hidden="true">✦</div>
           <span class="step-label">EVERYONE’S IN</span>
           <h1>Let the bluffing<br><span>begin.</span></h1>
-          <p class="game-copy">Keep your phones down, take turns giving a clue, and figure out who doesn’t know the word.</p>
+          <p class="game-copy"><strong id="round-starter"></strong> goes first. Keep your phones down, take turns giving a clue, and figure out who doesn’t know the word.</p>
           <button class="primary-button" id="play-again-button" type="button">
             <span>Deal a new round</span><span class="button-arrow" aria-hidden="true">↗</span>
           </button>

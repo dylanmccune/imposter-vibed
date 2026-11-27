@@ -24,6 +24,7 @@ const roleKicker = document.querySelector("#role-kicker");
 const roleTitle = document.querySelector("#role-title");
 const roleSymbol = document.querySelector("#role-symbol");
 const wordTile = document.querySelector("#word-tile");
+const roundStarter = document.querySelector("#round-starter");
 const imposterHint = document.querySelector("#imposter-hint");
 const hintText = document.querySelector("#hint-text");
 const roleCopy = document.querySelector("#role-copy");
@@ -82,6 +83,7 @@ const wordHints = {
 
 let players = [];
 let imposterIndex = -1;
+let starterIndex = -1;
 let secretWord = "";
 let secretCategory = "";
 let currentIndex = 0;
@@ -152,9 +154,8 @@ function startRound() {
   }
 
   try {
-    const firstPlayerIndex = randomIndex(players.length);
-    players = [...players.slice(firstPlayerIndex), ...players.slice(0, firstPlayerIndex)];
     imposterIndex = randomIndex(players.length);
+    starterIndex = randomIndex(players.length);
     secretCategory = categoryInput.value === "all"
       ? Object.keys(words)[randomIndex(Object.keys(words).length)]
       : categoryInput.value;
@@ -167,6 +168,7 @@ function startRound() {
   }
 
   currentIndex = 0;
+  roundStarter.textContent = players[starterIndex];
   setupView.hidden = true;
   gameView.hidden = false;
   showPassCard();
@@ -203,7 +205,7 @@ document.querySelector("#reveal-button").addEventListener("click", () => {
   wordTile.textContent = isImposter ? "" : secretWord;
   const showHint = isImposter && (
     hintModeInput.value === "always" ||
-    (hintModeInput.value === "first" && currentIndex === 0)
+    (hintModeInput.value === "first" && currentIndex === starterIndex)
   );
   imposterHint.hidden = !showHint;
   hintText.textContent = showHint ? wordHints[secretWord] : "";
@@ -236,7 +238,7 @@ hintModeInput.addEventListener("change", () => {
   const descriptions = {
     none: "The imposter gets no extra clues.",
     always: "The imposter gets a broad clue about the word.",
-    first: "The imposter gets a clue only if they’re first to see their role.",
+    first: "The imposter gets a clue only if they’re first to give a clue.",
   };
   document.querySelector("#hint-description").textContent = descriptions[hintModeInput.value];
 });
